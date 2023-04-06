@@ -38,27 +38,27 @@ export const getUserFriends = async (req, res) => {
 export const addRemoveFriend = async (req, res) => {
     try {
         // get user and the friend ID from the params
-        const {id, friendId} = req.params;
+        const {id, friendsId} = req.params;
         // find that user and friend in the DB
         const user = await User.findById(id);
-        const friend = await User.findById(friendId);
+        // const friend = await User.findById(friendsId) | [];
 
         // if that friend already exist in the user's friends list then 
-        // add all the friends back to his/her friends list except that friendId
-        // (else) if that friendId doesnt exist in the list friends of user then push that Id to the friends list of user
-        if(user.friend.includes(friendId)) {
-            user.friends = user.friends.filter((id) => id !== friendId);
-            // friend.friends = friend.friends.filter((id) => id !==id);
-        } else {
-            user.friends.push(friendId);
+        // add all the friends back to his/her friends list except that friendsId
+        // (else) if that friendsId doesnt exist in the list friends of user then push that Id to the friends list of user
+        if (user.friends.includes(friendsId)) {
+            user.friends = user.friends.filter((id) => id !== friendsId);
+            // friend.friends = friend.friends.filter((id) => id !== id);
+          } else {
+            user.friends.push(friendsId);
             // friend.friends.push(id);
-        }
-        await user.save();
-        await friend.save();
-
-        const friends = await Promise.all(
+          }
+          await user.save();
+        //   await friend.save();
+      
+          const friends = await Promise.all(
             user.friends.map((id) => User.findById(id))
-        );
+          );
         // we are going extract the data that will be required by the frontend
         const formattedFriends = friends.map(
             ({ _id, firstName, lastName, occupation, location, picturePath }) => {

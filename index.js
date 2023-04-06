@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 app.use(cors());
 // it sets the directory of where we are storing our images
 // here it is stored locally but we can store it on cloud and update the path here
-app.use("assets", express.static(path.join(__dirname, 'public/assets')));
+app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
 
 // // FILE STORAGE
 // whenever a file is uploaded, the image would get stored at this location

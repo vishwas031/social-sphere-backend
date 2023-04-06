@@ -33,7 +33,7 @@ export const register = async(req, res) => {
             location,
             occupation,
             viewedProfile: Math.floor(Math.random()*10000),
-            impression: Math.floor(Math.random*10000)
+            impression: Math.floor(Math.random()*10000),
         });
         // we saved this user to savedUser and return it as response
         const savedUser = await newUser.save();
@@ -49,14 +49,14 @@ export const login = async (req, res) => {
         const {email, password} = req.body;
         // check if the user exists in the DB
         const user = await User.findOne({email: email});
-        if(!user) return res.status(400).json({msg: "User does not exist."});
+        if(!user) return res.status(400).json({msg: "First register yourself"});
 
         // now check if the password entered is correct or not
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch) return res.status(400).json({msg: "Invalid Credentials"});
 
         // now generate a token with his/her userID and a secret_key, which would be used by other routes to check if the user is valid or not to access that route
-        const token = jwt.sign({id: user_id}, process.env.JWT_SECRET);
+        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
         // delete the password(un-hashed) after checking, so that it wont be sent back to the frontend
         delete user.password;
         res.status(200).json({token, user});
