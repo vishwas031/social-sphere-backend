@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from "dotenv";
-import multer from "multer";
 import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
@@ -11,6 +10,8 @@ import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js"
 import userRoutes from "./routes/users.js"
 import postRoutes from "./routes/posts.js"
+import conversationRoutes from "./routes/conversation.js"
+import messagesRoutes from "./routes/messages.js"
 import {register} from "./controllers/auth.js"
 import {createPost} from "./controllers/posts.js"
 import { verifyToken } from "./middleware/auth.js";
@@ -32,30 +33,32 @@ app.use(bodyParser.urlencoded({limit: "30mb", extended: true}));
 app.use(cors());
 // it sets the directory of where we are storing our images
 // here it is stored locally but we can store it on cloud and update the path here
-app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
+// app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
 
 // // FILE STORAGE
 // whenever a file is uploaded, the image would get stored at this location
 // in our case its "public/assets"
-const storage = multer.diskStorage({
-    destination: function(req, file, cb){
-        cb(null, "public/assets");
-    },
-    filename: function(req, file, cb){
-        cb(null, file.originalname);
-     }
-});
-const upload = multer({storage});
+// const storage = multer.diskStorage({
+//     destination: function(req, file, cb){
+//         cb(null, "public/assets");
+//     },
+//     filename: function(req, file, cb){
+//         cb(null, file.originalname);
+//      }
+// });
+// const upload = multer({storage});
 
 // ROUTES WITH FILES UPLOAD FEATURE HAS TO BE DEFINED HERE BECAUSE WE NEED THE UPLOAD FUNCTION AS MIDDLEWARE, AND THE UPLOAD MIDDLEWARE HAS TO BE DEFINED IN INDEX.JS FILE
 // there is a route "/auth/register" whenever it is hitted, first runs the middleware(upload.single()) then actual function runs (register)
-app.post("/auth/register", upload.single("picture"), register);
-app.post("/posts", verifyToken, upload.single("picture"), createPost);
+app.post("/auth/register", register);
+app.post("/posts", verifyToken, createPost);
 
 // ROUTES
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
+app.use("/conversations", conversationRoutes);
+app.use("/messages", messagesRoutes);
 
 // MONGOOSE SETUP
 const PORT = process.env.PORT || 6001;
