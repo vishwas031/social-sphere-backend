@@ -31,10 +31,17 @@ export const getAllConversation = async (req, res) => {
 
 export const getConversation = async (req, res) => {
   try {
-    const conversation = await Conversation.findOne({
+    var conversation = await Conversation.findOne({
       member: { $all: [req.params.firstUserId, req.params.secondUserId] },
     });
-    console.log(conversation);
+    if(conversation==null)
+    {
+      const newConversation = new Conversation({
+          member: [req.params.firstUserId,req.params.secondUserId],
+      });
+      conversation = await newConversation.save();
+
+    }
     res.status(200).json(conversation)
   } catch (err) {
     res.status(500).json(err);

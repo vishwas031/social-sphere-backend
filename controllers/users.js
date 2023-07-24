@@ -12,6 +12,16 @@ export const getUser = async (req, res) => {
     }
 }
 
+export const getAllUsers = async (req, res) => {
+    try {
+        // we'll get the userID from the params and then we search for that user in DB and return the user we got from the DB.
+        const allUsers = await User.find({});
+        res.status(200).json(allUsers);
+    } catch (err) {
+        res.status(404).json({message:err.message});
+    }
+}
+
 export const getUserFriends = async (req, res) => {
     try {
         const {id} = req.params;
